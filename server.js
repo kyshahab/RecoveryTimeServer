@@ -1,21 +1,25 @@
+require('dotenv').config();
+const uri = process.env.URI;
+const dbName = process.env.DB_NAME;
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const port = 8000;
+const MongoClient = require('mongodb').MongoClient;
 app.use(bodyParser.urlencoded({ extended: true }));
 
+console.log(process.env);
 
-const MongoClient = require('mongodb').MongoClient;
-// hide with dotenv: https://forum.freecodecamp.org/t/how-to-store-a-mongodb-username-and-password-persistently-using-dotenv/50994
-const uri = "mongodb+srv://Kameron:<admin>@cluster0.hzwkb.mongodb.net/RecoveryTime?retryWrites=true&w=majority";
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-client.connect(err => {
-  const collection = client.db("test").collection("devices");
-  client.close();
+MongoClient.connect(uri, function(err, client) {
+	if (err) return process.exit(1);
+	console.log("Connected successfully to database.");
+
+	const db = client.db(dbName);
+
+	require('./app/routes')(app, db);
 });
 
-require('./app/routes')(app, {});
-
-app.listen(port, () => {  console.log('Listening on ' + port);});
+app.listen(port, () => { console.log('Listening on ' + port); });
 
 

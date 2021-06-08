@@ -2,11 +2,12 @@ function addUser(name, pass, res, db) {
 	const user = { _id: name, password: pass };
 	db.collection('users').insert(user, (err, results) => {
 		if (err) {
+			console.log("ERROR");
 			res.send({'error': 'An error has occured'});
 		}
 		else {
 			console.log(name + ' added.');
-			res.send(results.ops[0]);
+			res.send({ 'error': null });
 		}
 	});
 	const arr = new Array(48).fill(0);
@@ -19,11 +20,12 @@ function authenticate(name, pass, res, db) {
 	const user = { _id: name, password: pass };
 	db.collection('users').findOne(user, (err, results) => { 
 		if (err || results == null) {
+			console.log("ERROR");
 			res.send({'error': 'An error has occured'});
 		}
 		else {
 			console.log(results);
-			res.send({});
+			res.send({ 'error': null });
 		}
 	});
 }
